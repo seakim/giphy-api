@@ -1,0 +1,20 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    // this will add additional tasks to the vscode editor
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Sass Compile",
+            "type": "shell",
+            "command": "node-sass assets/scss/main.scss -o assets/css",
+            "group": "build"
+        },
+        {
+            "label": "Bootstrap Compile",
+            "type": "shell",
+            "command": "node-sass assets/bootstrap-scss/bootstrap.scss -o assets/css",
+            "group": "build"
+        }
+    ]
+}

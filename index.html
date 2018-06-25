@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Giphy-API</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/javascript/script.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="h1" style="background-color: rgb(0, 0, 0) ; color: white;">
+            <h1 class="text-center">
+                <strong>GIPHY-API Search</strong>
+            </h1>
+        </div>
+        
+        <section class="main">
+            <div class="row">
+                <div class="col-sm-12">
+                    <br>
+                    <!-- First panel is for handling the search parameters -->
+                    <div class="card">
+                        <div class="card-header">
+                            <strong><i class="fa fa-list-alt"></i> Search GIPHY</strong>
+                        </div>
+                        <div class="card-body">
+                            <form role="form">
+                                <input type="text" class="form-control" id="search-term" placeholder="e.g> PARTY">
+                                <button type="submit" class="btn btn-default" id="run-search">
+                                    <i class="fa fa-search"></i> &#128269;
+                                </button>
+                                <!-- <button class="btn btn-default" id="clear-all">
+                                    <i class="fa fa-trash"></i> Clear Results
+                                </button> -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="recent col-sm-12"><strong>Recent Search:</strong></div>
+                </div>
+
+                <div class="btn-container card-body row">
+                        <!-- <button type="submit" class="btn btn-default" id="giphy-dog">
+                            <i class="fa fa-search"></i> Sean
+                        </button> -->
+                    <div class="btn-inner col-sm-3">
+                        <button class="giphy-btn" data-attr="car">Car</button>
+                    </div>
+                    <div class="btn-inner col-sm-3">
+                        <button class="giphy-btn" data-attr="dog">Dog</button>
+                    </div>      
+                    <div class="btn-inner col-sm-3">
+                        <button class="giphy-btn" data-attr="funny">Funny</button>
+                    </div>
+                    <div class="btn-inner col-sm-3">
+                        <button class="giphy-btn" data-attr="party">Party</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="giphy-img-area card row"></div>
+        </section>
+
+        <footer>
+        </footer>
+        </div>
+</body>
+
+</html>
