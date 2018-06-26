@@ -72,6 +72,28 @@ function updateBtn(GifData) {
 /////* *//////
 
 /////
+// run search & add to Button & update page
+/////
+$(document).on('click', '#run-search', function () {
+    event.preventDefault();
+
+    // search topic and add to recent search with gif image
+    var topic = $('#search-term').val().trim();
+    recent.unshift(topic);
+    recent.pop();
+    console.log(recent);
+    renderBtn();
+
+    var queryURL = buildQueryURLSearch(topic, 10);
+    console.log(queryURL);
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    }).then(updatePage);
+});
+/////* *//////
+
+/////
 // update page on button click
 /////
 $(document).on("click", '.giphy-btn', function (event) {
@@ -153,23 +175,33 @@ function updatePage(GifData) {
             $gifRating.html(rating);
         }
 
+        var $gifFav = $('<button>');
+        $gifFav.addClass('giphy-favorite');
+        $gifFav.attr('favorite', false);
+        $gifFav.html('&#x2764;');
+
+
         // Append the components to $gifContainer
         $gifContainer.append($gif);
         $gifContainer.append($gifRating);
+        $gifContainer.append($gifFav);
     }
 }
 /////* *//////
 
-$(document).on('click', '#run-search', function () {
+// toggle favorite on click
+$(document).on('click', '.giphy-favorite', function () {
     event.preventDefault();
-
-    // search topic and add to recent search with gif image
-    var topic = $('#search-term').val().trim();
-    recent.unshift(topic);
-    recent.pop();
-    console.log(recent);
-    renderBtn();
+    var fav = $(this).attr("favorite");
+    if (fav === 'false') {   
+        $(this).css("color", 'rgba(0, 0, 0, 1)');
+        $(this).attr('favorite', 'true');
+    } else {
+        $(this).css("color", 'rgba(0, 0, 0, 0.4)');
+        $(this).attr('favorite', 'false');
+    }
 });
+
 
 // toggle animate and still on click
 $(document).on('click', '.gif', function () {
