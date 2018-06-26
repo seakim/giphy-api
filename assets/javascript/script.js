@@ -8,31 +8,52 @@ renderBtn();
 function renderBtn() {
     $(".btn-container").empty();
 
-    for (var i = 0; i < recent.length; i++) {
-        var queryURL = buildQueryURLRand1(recent[i]);
+    // 1. does not work
+    // for (var i = 0; i < recent.length; i++) {
+    //     var queryURL = buildQueryURLRand1(recent[i]);
+    //     // IIFE to create own function closure. (i in for loop returns max)  Note: passing cntr instead of i inside of 'then'
+    //     (function (cntr) {
+    //         $.ajax({
+    //             url: queryURL,
+    //             method: "GET"
+    //         }).then(updateBtn); 
+    //         // //// two problems with using this callback:
+    //         // ////  1. cannot get recent[i]
+    //         // ////  2. it's returning only the last data using for loop
+    //         //closing with i
+    //     })(i);
+    // }
 
-        // IIFE to create own function closure. (i in for loop returns max)  Note: passing cntr instead of i inside of 'then'
-        (function (cntr) { //
-            $.ajax({
-                url: queryURL,
-                method: "GET"
-            // }).then(updateBtn); 
-            // //// two problems with using this callback:
-            // ////  1. cannot get recent[i]
-            // ////  2. it's returning only the last data using for loop
-            }).then(function (response) { //
-                var fixedHeightURL = response.data.images.fixed_height.url; //
-                var btnContainer = $('<button class="giphy-btn">'); //
-                btnContainer.attr('data-attr', recent[cntr]); //
-                btnContainer.attr('style', 'background: url(' + fixedHeightURL + ')'); //
-                btnContainer.text(recent[cntr]); // how do I get this on general basis
-                var giphyContainer = $('<div class="btn-inner col-sm-3">'); //
-                giphyContainer.append(btnContainer); //
-                $('.btn-container').prepend(giphyContainer); //
-            }); //
-            //closing with i
-        })(i); //
-    }
+    // 2. works 
+    // for (var i = 0; i < recent.length; i++) {
+    //     var queryURL = buildQueryURLRand1(recent[i]);
+    //     // IIFE to create own function closure. (i in for loop returns max)  Note: passing cntr instead of i inside of 'then'
+    //     (function (cntr) { //
+    //         $.ajax({
+    //             url: queryURL,
+    //             method: "GET"
+    //         }).then(function (response) { 
+    //             var fixedHeightURL = response.data.images.fixed_height.url; 
+    //             var btnContainer = $('<button class="giphy-btn">'); 
+    //             btnContainer.attr('data-attr', recent[cntr]); 
+    //             btnContainer.attr('style', 'background: url(' + fixedHeightURL + ')'); 
+    //             btnContainer.text(recent[cntr]); // how do I get this on general basis
+    //             var giphyContainer = $('<div class="btn-inner col-sm-3">'); 
+    //             giphyContainer.append(btnContainer); 
+    //             $('.btn-container').prepend(giphyContainer); 
+    //         }); 
+    //         //closing with i
+    //     })(i); //
+    // }
+
+    // 3. works: each wait for the callbacks
+    recent.forEach( function (e) {
+        var queryURL = buildQueryURLRand1(e);
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(updateBtn); 
+    });
 };
 /**
  * @returns {string} pulls information from the input and build the query URL
@@ -59,15 +80,17 @@ function updateBtn(GifData) {
     var $gifBtn = $('<button>');
     $gifBtn.addClass("giphy-btn");
 
-    var fixedHeightURL = gifBtn.images.fixed_height.url;
-    if (fixedHeightURL) {
-        $gifBtn.attr('data-attr', fixedHeightURL);
-        $gifBtn.attr('style', 'background: url(' + fixedHeightURL + ')');
-        // $gifBtn.text(gifBtn.title); // I want to get search text on the button
-        $gifBtn.text($('#search-term').val().trim()); // I want to get search text on the button
+    if (gifBtn.images) {
+        var fixedHeightURL = gifBtn.images.fixed_height.url;
+        if (fixedHeightURL) {
+            $gifBtn.attr('data-attr', fixedHeightURL);
+            $gifBtn.attr('style', 'background: url(' + fixedHeightURL + ')');
+            // $gifBtn.text(gifBtn.title); // I want to get search text on the button
+            $gifBtn.text($('#search-term').val().trim()); // I want to get search text on the button
+        }
+        // Append btn to Container
+        $btnContainer.append($gifBtn);
     }
-    // Append btn to Container
-    $btnContainer.append($gifBtn);
 }
 /////* *//////
 
@@ -166,7 +189,7 @@ function updatePage(GifData) {
         //     $gif.attr('data-state', 'still');
         // }
 
-        // If the GifData has the components below, append to $gifRating
+        // If the GifData has the components below, append
         var $gifRating = $("<h5>");
         $gifRating.addClass('giphy-rating');
         var rating = gif.rating;
@@ -175,30 +198,59 @@ function updatePage(GifData) {
             $gifRating.html(rating);
         }
 
+        var title = gif.title;
+        if (title) {
+            $gif.attr('title', title);
+        }     
+   
         var $gifFav = $('<button>');
         $gifFav.addClass('giphy-favorite');
         $gifFav.attr('favorite', false);
         $gifFav.html('&#x2764;');
-
+        
+        var $gifDown = $('<button class="giphy-download">');
+        var gifDown = '<a href= "' + originalURL + '" download>Download</a>';
+        $gifDown.append(gifDown);
 
         // Append the components to $gifContainer
         $gifContainer.append($gif);
         $gifContainer.append($gifRating);
         $gifContainer.append($gifFav);
+        $gifContainer.append($gifDown);
+        // $gifContainer.append($gifDown);
     }
 }
 /////* *//////
 
+// Searched tab and Favorite tab
+$(document).on('click', '.giphy-tab-btn', function () {
+    var tab = $(this).attr("id");
+    // console.log(tab);
+    if (tab === 'giphy-page') {
+        $('.giphy-img-area').show();
+        $('.fav-img-area').hide();
+    } else {
+        $('.giphy-img-area').hide();
+        $('.fav-img-area').show();
+    }
+});
+
+
 // toggle favorite on click
 $(document).on('click', '.giphy-favorite', function () {
     event.preventDefault();
+    var $gifContainer = $(this).parent();
     var fav = $(this).attr("favorite");
     if (fav === 'false') {   
         $(this).css("color", 'rgba(0, 0, 0, 1)');
         $(this).attr('favorite', 'true');
-    } else {
+        $('.fav-img-area').prepend($gifContainer);
+    }
+    if (fav === 'true') {
         $(this).css("color", 'rgba(0, 0, 0, 0.4)');
         $(this).attr('favorite', 'false');
+        $gifContainer.remove();
+        $('.giphy-img-area').prepend($gifContainer);
     }
 });
 

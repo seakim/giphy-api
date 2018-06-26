@@ -40,10 +40,22 @@ body {
     color: rgba(255, 255, 255, 0.8);
 
 }
+
+.giphy-img-tab {
+    display: inline-block;
+    text-align: center;
+}
 .giphy-img-area {
     padding: 30px 0;
-    background: rgba(255, 255, 255, 1);
+    /* background: rgba(255, 255, 255, 1); */
+    background: rgb(170, 211, 169);
     /* display: inline-block; */
+}
+
+.fav-img-area {
+    padding: 30px 0;
+    /* background: rgba(255, 255, 255, 1); */
+    background: rgb(231, 216, 178);
 }
 
 /* this width does not change */
@@ -86,9 +98,18 @@ body {
     top:2%;
     right: 2%;
     z-index: 50;
+    background: rgba(255,255,255,0);
+    border-style: none;
     color: rgba(0, 0, 0, 0.4);
     font-weight: bold;
     font-size: 3em;
+}
+
+.giphy-download {
+    position: absolute;
+    bottom: 2%;
+    right: 2%;
+    z-index: 50;
 }
 
 /* cannot get media query to work */
