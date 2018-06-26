@@ -1,3 +1,4 @@
+
 body {
     background: rgba(0, 0, 0, 1);
     /* color: rgba(255, 255, 255, 0.7); */
@@ -45,9 +46,11 @@ body {
     /* display: inline-block; */
 }
 
+/* this width does not change */
 .giphy-container {
     position: relative;
     width: 48%;
+    /* width: 100%;     */
     height: 300px;
     overflow: hidden;
     margin: 1%;
@@ -56,6 +59,8 @@ body {
 
 .giphy-container img {
     position: absolute;
+    width: 100%;    
+
     top: 50%;
     left: 50%;
     min-height: 100%;
@@ -74,4 +79,20 @@ body {
     color: rgba(0, 0, 0, 0.5);
     font-weight: bold;
     font-size: 2em;
+}
+
+/* cannot get media query to work */
+@media only screen and (max-width : 500px) {
+
+    .giphy-img-area {
+        background: black;
+    }
+    .giphy-container {
+        position: relative;
+        width: 98%;
+        height: 300px;
+        overflow: hidden;
+        margin: 1%;
+    }
+
 }
