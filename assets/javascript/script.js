@@ -3,6 +3,7 @@
 // update buttons
 /////
 var recent = ['car', 'dog', 'funny', 'party'];
+var offset = 0;
 renderBtn();
 
 function renderBtn() {
@@ -25,35 +26,35 @@ function renderBtn() {
     // }
 
     // 2. works 
-    // for (var i = 0; i < recent.length; i++) {
-    //     var queryURL = buildQueryURLRand1(recent[i]);
-    //     // IIFE to create own function closure. (i in for loop returns max)  Note: passing cntr instead of i inside of 'then'
-    //     (function (cntr) { //
-    //         $.ajax({
-    //             url: queryURL,
-    //             method: "GET"
-    //         }).then(function (response) { 
-    //             var fixedHeightURL = response.data.images.fixed_height.url; 
-    //             var btnContainer = $('<button class="giphy-btn">'); 
-    //             btnContainer.attr('data-attr', recent[cntr]); 
-    //             btnContainer.attr('style', 'background: url(' + fixedHeightURL + ')'); 
-    //             btnContainer.text(recent[cntr]); // how do I get this on general basis
-    //             var giphyContainer = $('<div class="btn-inner col-sm-3">'); 
-    //             giphyContainer.append(btnContainer); 
-    //             $('.btn-container').prepend(giphyContainer); 
-    //         }); 
-    //         //closing with i
-    //     })(i); //
-    // }
+    for (var i = 0; i < recent.length; i++) {
+        var queryURL = buildQueryURLRand1(recent[i]);
+        // IIFE to create own function closure. (i in for loop returns max)  Note: passing cntr instead of i inside of 'then'
+        (function (cntr) { //
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (response) { 
+                var fixedHeightURL = response.data.images.fixed_height.url; 
+                var btnContainer = $('<button class="giphy-btn">'); 
+                btnContainer.attr('data-attr', recent[cntr]); 
+                btnContainer.attr('style', 'background: url(' + fixedHeightURL + ')'); 
+                btnContainer.text(recent[cntr]); // how do I get this on general basis
+                var giphyContainer = $('<div class="btn-inner col-sm-3">'); 
+                giphyContainer.append(btnContainer); 
+                $('.btn-container').prepend(giphyContainer); 
+            }); 
+            //closing with i
+        })(i); //
+    }
 
     // 3. works: each wait for the callbacks
-    recent.forEach( function (e) {
-        var queryURL = buildQueryURLRand1(e);
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).then(updateBtn); 
-    });
+    // recent.forEach( function (e) {
+    //     var queryURL = buildQueryURLRand1(e);
+    //     $.ajax({
+    //         url: queryURL,
+    //         method: "GET"
+    //     }).then(updateBtn); 
+    // });
 };
 /**
  * @returns {string} pulls information from the input and build the query URL
@@ -106,8 +107,9 @@ $(document).on('click', '#run-search', function () {
     recent.pop();
     console.log(recent);
     renderBtn();
+    offset += 10;
 
-    var queryURL = buildQueryURLSearch(topic, 10);
+    var queryURL = buildQueryURLSearch(topic, 10, offset);
     console.log(queryURL);
     $.ajax({
         url: queryURL,
@@ -121,12 +123,10 @@ $(document).on('click', '#run-search', function () {
 /////
 $(document).on("click", '.giphy-btn', function (event) {
     event.preventDefault();
-    renderBtn();
-    // reset giphy img
-    $('.giphy-img-area').html('');
     var data = $(this).attr("data-attr");
-
-    var queryURL = buildQueryURLSearch(data, 10);
+    renderBtn();
+    offset += 10;
+    var queryURL = buildQueryURLSearch(data, 10, offset);
     console.log(queryURL);
     $.ajax({
         url: queryURL,
@@ -136,12 +136,13 @@ $(document).on("click", '.giphy-btn', function (event) {
 /**
  * @returns {string} pulls information from the input and build the query URL
  */
-function buildQueryURLSearch(keyword, limit) {
+function buildQueryURLSearch(keyword, limit, offset) {
     var queryURL = "https://api.giphy.com/v1/gifs/search?";
     var queryParams = {};
     queryParams.q = keyword;
     queryParams.api_key = 'dc6zaTOxFJmzC';
     queryParams.limit = limit;
+    queryParams.offset = offset;
     return queryURL + $.param(queryParams);
 }
 
@@ -158,7 +159,8 @@ function updatePage(GifData) {
 
         // Create <div> to contain the gifs and other contents
         var $gifContainer = $('<div>');
-        $gifContainer.addClass("giphy-container col-12 col-sm-6");
+        $gifContainer.addClass("giphy-container col-sm-6 col-12");
+        // $gifContainer.addClass("giphy-container col-12");
 
         // Add the newly created element to the DOM
         $('.giphy-img-area').prepend($gifContainer);
@@ -180,22 +182,13 @@ function updatePage(GifData) {
             $gif.attr('data-state', 'still');
         }
 
-        // if (fixedWidthURL) {
-        //     $gif.attr('data-animate', fixedWidthURL);
-        // }
-        // if (fixedWidthStillURL) {
-        //     $gif.attr('data-still', fixedWidthStillURL);
-        //     $gif.attr('src', fixedWidthStillURL);
-        //     $gif.attr('data-state', 'still');
-        // }
-
         // If the GifData has the components below, append
         var $gifRating = $("<h5>");
         $gifRating.addClass('giphy-rating');
         var rating = gif.rating;
         if (rating) {
             $gif.attr('rating', rating);
-            $gifRating.html(rating);
+            $gifRating.html(rating.toUpperCase());
         }
 
         var title = gif.title;
@@ -217,7 +210,7 @@ function updatePage(GifData) {
         $gifContainer.append($gifRating);
         $gifContainer.append($gifFav);
         $gifContainer.append($gifDown);
-        // $gifContainer.append($gifDown);
+        $gifContainer.append($gifDown);
     }
 }
 /////* *//////
