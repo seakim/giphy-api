@@ -1,2 +1,5 @@
 # giphy-api
-RCB-hw6
+
+- search gif image
+- save search to recent search
+- add gif image to favorite
